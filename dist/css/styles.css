@@ -90,7 +90,8 @@ img {
   #archive-display .archives-row .mobile-header {
     width: 10em;
     background-color: #9fd5b3;
-    color: #004544; }
+    color: #004544;
+    font-weight: bold; }
   #archive-display .archives-row .flex-size, #archive-display .archives-row .fixed-size {
     width: calc(100% - 10em); }
 
@@ -109,4 +110,6 @@ img {
   #archive-display .archives-row.header {
     background-color: #9fd5b3;
     color: #004544;
-    display: flex; } }
+    display: flex; }
+    #archive-display .archives-row.header article {
+      font-weight: bold; } }

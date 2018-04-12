@@ -63,6 +63,7 @@ img{width: 100%;}
       width: 10em;
       background-color: $color-2;
       color: $color-1;
+      font-weight: bold;
     }
 
     .flex-size,.fixed-size{
@@ -97,6 +98,10 @@ img{width: 100%;}
       background-color: $color-2;
       color: $color-1;
       display: flex;
+
+      article{
+        font-weight: bold;
+      }
     }
   }
 }
