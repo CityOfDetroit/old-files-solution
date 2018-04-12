@@ -5,4 +5,4 @@ Simple app to help us serve old files in drupal
 Clone the project. Run `npm install` inside the project folder
 
 # Develoment
-run `gulp` to load the project locally under `http://localhost:3000`
+run `gulp` to load the project locally under `https://localhost:3000`
