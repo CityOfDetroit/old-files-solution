@@ -13,7 +13,7 @@
   "author": "Edgar Montes",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babelify": "^7.3.0",
     "browser-sync": "^2.23.2",
     "browserify": "^14.5.0",
