@@ -3,6 +3,9 @@ const moment = require('moment');
 export default class Panel {
   constructor(version) {
     this.version = version;
+    this.indexLvl = 0;
+    this.index = 0;
+    this.indexes = [];
   }
 
   creatPanel(data, controller){
@@ -30,8 +33,64 @@ export default class Panel {
     let tempHTML = null;
     for (var key in value.doc) {
       if (value.doc.hasOwnProperty(key)) {
-        tempHTML = `<a href="${baseURL}/${value.doc[key]}" target="_blank">${key}</a>`
+        if(value.doc[key].includes('http://') || value.doc[key].includes('https://')){
+          tempHTML = `<a href="${value.doc[key]}" target="_blank">${key}</a>`;
+        }else{
+          tempHTML = `<a href="${baseURL}${value.doc[key]}" target="_blank">${key}</a>`;
+        }
       }
+    }
+    return tempHTML;
+  }
+  getIndexID(lvl, controller){
+    let tempID = '';
+    for (let index = 0; index < lvl+1; index++) {
+      tempID += controller.panel.indexes[index];
+      (index < lvl) ? tempID += '-' : 0;
+    }
+    return tempID;
+  }
+  buildChildren(mainValue, basePath, lvl, controller){
+    let tempIndexLvl = lvl;
+    let tempHTML = '';
+    if(Array.isArray(mainValue)){
+      tempHTML = `
+      <div id="c-${controller.panel.getIndexID(lvl, controller)}" class="collapse" aria-labelledby="h-${controller.panel.getIndexID(lvl, controller)}">
+        <div class="card-body">
+          <ul>
+            ${mainValue.map(doc => `
+              <li>${controller.panel.getFileLink({doc}, basePath)}</li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+      `;
+    }else {
+      tempHTML = `
+      <div id="c-${controller.panel.indexes[lvl]}" class="collapse" aria-labelledby="h-${controller.panel.indexes[lvl]}">
+        <div class="card-body">`;
+      tempIndexLvl++;
+      controller.panel.indexes.push(0);
+      Object.entries(mainValue).forEach(([key, value]) => {
+        tempHTML += `
+        <div class="card">
+          <div class="card-header" id="h-${controller.panel.getIndexID(tempIndexLvl, controller)}">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#c-${controller.panel.getIndexID(tempIndexLvl, controller)}" aria-expanded="true" aria-controls="c-${controller.panel.getIndexID(tempIndexLvl, controller)}">
+                ${key}
+              </button>
+            </h5>
+          </div>
+
+          ${controller.panel.buildChildren(value, basePath, tempIndexLvl, controller)}
+        </div>
+        `;
+        controller.panel.indexes[tempIndexLvl]++;
+      });
+      tempHTML += `
+        </div>
+      </div>
+      `;
     }
     return tempHTML;
   }
@@ -75,29 +134,22 @@ export default class Panel {
       case 'archive':
         switch (params[1]) {
           case 'v01':
-            let index = 0;
-            Object.entries(values.reports).forEach(([key, value]) => {tempHTML += `
-            <div class="card">
-              <div class="card-header" id="h-${index}">
-                <h5 class="mb-0">
-                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#c-${index}" aria-expanded="true" aria-controls="c-${index}">
-                    ${key}
-                  </button>
-                </h5>
-              </div>
-
-              <div id="c-${index}" class="collapse" aria-labelledby="h-${index}">
-                <div class="card-body">
-                  <ul>
-                    ${value.map(doc => `
-                      <li>${controller.panel.getFileLink({doc}, values.base_url)}</li>
-                    `).join('')}
-                  </ul>
+            let tempIndexLvl = 0;
+            controller.panel.indexes.push(0);
+            Object.entries(values.reports).forEach(([key, value]) => {
+              tempHTML += `
+              <div class="card">
+                <div class="card-header" id="h-${controller.panel.indexes[tempIndexLvl]}">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#c-${controller.panel.indexes[tempIndexLvl]}" aria-expanded="true" aria-controls="c-${controller.panel.indexes[tempIndexLvl]}">
+                      ${key}
+                    </button>
+                  </h5>
                 </div>
+                ${controller.panel.buildChildren(value, values.base_path, tempIndexLvl, controller)}
               </div>
-            </div>
-            `;
-            index++;
+              `;
+              controller.panel.indexes[tempIndexLvl]++;
             });
             break;
           default:

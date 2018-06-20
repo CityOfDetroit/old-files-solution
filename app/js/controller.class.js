@@ -1,5 +1,6 @@
 'use strict';
 import Panel from './panel.class.js';
+import "isomorphic-fetch";
 export default class Controller {
   constructor(version, source) {
     this.source = source;

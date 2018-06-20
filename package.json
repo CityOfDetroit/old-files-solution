@@ -15,7 +15,7 @@
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
     "babelify": "^7.3.0",
-    "browser-sync": "^2.23.2",
+    "browser-sync": "^2.24.4",
     "browserify": "^14.5.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0",
@@ -23,6 +23,7 @@
     "vinyl-source-stream": "^1.1.2"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0"
+    "babel-polyfill": "^6.23.0",
+    "isomorphic-fetch": "^2.2.1"
   }
 }
