@@ -17,13 +17,13 @@
     "babelify": "^7.3.0",
     "browser-sync": "^2.24.4",
     "browserify": "^14.5.0",
-    "gulp": "^4.0.0",
     "gulp-sass": "^4.0.1",
     "moment": "^2.22.2",
     "vinyl-source-stream": "^1.1.2"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
+    "gulp": "^3.9.1",
     "isomorphic-fetch": "^2.2.1"
   }
 }

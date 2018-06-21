@@ -114,14 +114,14 @@ export default class Panel {
                <article class="mobile-header">DPS School</article>
                <article class="flex-size">${location.name}</article>
                <article class="mobile-header">Analysis Completed</article>
-               <article class="fixed-size"><a href="${values.base_url}${location.report_path}" target="_blank">Report</a></article>
+               <article class="fixed-size"><a href="${values.base_path}${location.report_path}" target="_blank">Report</a></article>
                <article class="mobile-header">Max Lead Result</article>
                <article class="fixed-size">
                ${controller.panel.getStatus(location.status)}
                </article>
                <article class="mobile-header">Fix Plan</article>
                <article class="fixed-size">
-               ${location.fix_plan_path != '' ? `<a href="${values.base_url}${location.fix_plan_path}" target="_blank">${location.fix_plan_status}</a>` : ''}
+               ${location.fix_plan_path != '' ? `<a href="${values.base_path}${location.fix_plan_path}" target="_blank">${location.fix_plan_status}</a>` : ''}
                </article>
               </section>`
             ).join('')}
