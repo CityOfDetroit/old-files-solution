@@ -9,7 +9,9 @@ export default class Panel {
   }
 
   creatPanel(data, controller){
-    let markup = controller.panel.createMarkup(data.data, controller);
+    console.log(data);
+    let markup = controller.panel.createMarkup(data, controller);
+    console.log(markup);
     document.querySelector('#archive-display').innerHTML = markup;
   }
   getStatus(value){
@@ -95,33 +97,34 @@ export default class Panel {
     return tempHTML;
   }
   createMarkup(values, controller){
-    // console.log(values);
+    console.log(values);
     let tempHTML = '';
     let params = controller.panel.version.split('--');
+    console.log(params);
     switch (params[0]) {
       case 'table':
         switch (params[1]) {
           case 'v01':
             tempHTML = `
             <section class="archives-row header">
-              <article class="flex-size">DPS School</article>
+              <article class="flex-size">School/Day Care</article>
               <article class="fixed-size">Analysis Completed</article>
               <article class="fixed-size">Max Lead Result</article>
               <article class="fixed-size">Fix Plan</article>
             </section>
-            ${values.locations.map(location =>
+            ${values.map(location =>
               `<section class="archives-row">
-               <article class="mobile-header">DPS School</article>
-               <article class="flex-size">${location.name}</article>
+               <article class="mobile-header">School</article>
+               <article class="flex-size">${location.school_name}</article>
                <article class="mobile-header">Analysis Completed</article>
-               <article class="fixed-size"><a href="${values.base_path}${location.report_path}" target="_blank">Report</a></article>
+               <article class="fixed-size"><a href="${location.url}" target="_blank">Report</a></article>
                <article class="mobile-header">Max Lead Result</article>
                <article class="fixed-size">
                ${controller.panel.getStatus(location.status)}
                </article>
                <article class="mobile-header">Fix Plan</article>
                <article class="fixed-size">
-               ${location.fix_plan_path != '' ? `<a href="${values.base_path}${location.fix_plan_path}" target="_blank">${location.fix_plan_status}</a>` : ''}
+               ${location.fix_plan_url ? `<a href="${location.fix_plan_url}" target="_blank">${location.fix_plan_status}</a>` : ''}
                </article>
               </section>`
             ).join('')}
@@ -132,6 +135,7 @@ export default class Panel {
         }
         break;
       case 'archive':
+        let data = this.buildStructure(values);
         switch (params[1]) {
           case 'v01':
             let tempIndexLvl = 0;
@@ -159,6 +163,39 @@ export default class Panel {
       default:
         console.log('no valid format found');
     }
+    console.log(tempHTML);
     return tempHTML;
+  }
+
+  buildStructure(data){
+    console.log(data);
+    let structData = [];
+    data.map(doc => {
+      if(doc.section != null){
+        console.log(doc.section);
+        console.log(Object.keys(structData).includes(doc.section));
+        if(Object.keys(structData).includes(doc.section)){
+          if(doc.sub_section != null){
+            if(Object.keys(structData[doc.section]).includes(doc.sub_section)){
+              structData[doc.section][doc.sub_section].push(doc);
+            }else{
+              structData[doc.section][doc.sub_section] = [doc];
+            }
+          }else{
+            structData[doc.section].push(doc);
+          }
+        }else{
+          if(doc.sub_section != null){
+            structData[doc.section][doc.sub_section] = [doc];
+          }else{
+            structData[doc.section] = [doc];
+          }
+        }
+      }else{
+        structData['root'] = [doc];
+      }
+    });
+    console.log(structData);
+    return structData;
   }
 }
