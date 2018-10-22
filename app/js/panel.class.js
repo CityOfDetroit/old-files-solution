@@ -8,13 +8,14 @@ export default class Panel {
     this.indexes = [];
   }
 
-  creatPanel(data, controller){
-    console.log(data);
-    let markup = controller.panel.createMarkup(data, controller);
-    console.log(markup);
+  creatPanel(data, controller) {
+    // console.log(data);
+    let markup = this.createMarkup(data, controller);
+    // console.log(markup);
     document.querySelector('#archive-display').innerHTML = markup;
   }
-  getStatus(value){
+
+  getStatus(value) {
     switch (value) {
       case 'Acceptable':
         return `<span class="green-text">${value}</span>`;
@@ -31,11 +32,12 @@ export default class Panel {
         return ``;
     }
   }
-  getFileLink(value, baseURL){
+
+  getFileLink(value, baseURL) {
     let tempHTML = null;
     for (var key in value.doc) {
       if (value.doc.hasOwnProperty(key)) {
-        if(value.doc[key].includes('http://') || value.doc[key].includes('https://')){
+        if(value.doc[key].includes('http://') || value.doc[key].includes('https://')) {
           tempHTML = `<a href="${value.doc[key]}" target="_blank">${key}</a>`;
         }else{
           tempHTML = `<a href="${baseURL}${value.doc[key]}" target="_blank">${key}</a>`;
@@ -44,63 +46,56 @@ export default class Panel {
     }
     return tempHTML;
   }
-  getIndexID(lvl, controller){
-    let tempID = '';
-    for (let index = 0; index < lvl+1; index++) {
-      tempID += controller.panel.indexes[index];
-      (index < lvl) ? tempID += '-' : 0;
-    }
-    return tempID;
-  }
-  buildChildren(mainValue, basePath, lvl, controller){
-    let tempIndexLvl = lvl;
-    let tempHTML = '';
-    if(Array.isArray(mainValue)){
-      tempHTML = `
-      <div id="c-${controller.panel.getIndexID(lvl, controller)}" class="collapse" aria-labelledby="h-${controller.panel.getIndexID(lvl, controller)}">
-        <div class="card-body">
-          <ul>
-            ${mainValue.map(doc => `
-              <li>${controller.panel.getFileLink({doc}, basePath)}</li>
-            `).join('')}
-          </ul>
-        </div>
-      </div>
-      `;
-    }else {
-      tempHTML = `
-      <div id="c-${controller.panel.indexes[lvl]}" class="collapse" aria-labelledby="h-${controller.panel.indexes[lvl]}">
-        <div class="card-body">`;
-      tempIndexLvl++;
-      controller.panel.indexes.push(0);
-      Object.entries(mainValue).forEach(([key, value]) => {
-        tempHTML += `
-        <div class="card">
-          <div class="card-header" id="h-${controller.panel.getIndexID(tempIndexLvl, controller)}">
-            <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#c-${controller.panel.getIndexID(tempIndexLvl, controller)}" aria-expanded="true" aria-controls="c-${controller.panel.getIndexID(tempIndexLvl, controller)}">
-                ${key}
-              </button>
-            </h5>
-          </div>
 
-          ${controller.panel.buildChildren(value, basePath, tempIndexLvl, controller)}
+  buildHeaders(value, lvl){
+    let tempHTML = '';
+    let tempLvl = lvl + 1;
+    this.indexes[tempLvl] = 0;
+    Object.entries(value).forEach(([key, data]) => {
+      tempHTML +=`
+      <div class="card">
+        <div class="card-header" id="h-${tempLvl}-${this.indexes[tempLvl]}">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#c-${tempLvl}-${this.indexes[tempLvl]}" aria-expanded="true" aria-controls="c-${tempLvl}-${this.indexes[tempLvl]}">
+              ${key}
+            </button>
+          </h5>
         </div>
-        `;
-        controller.panel.indexes[tempIndexLvl]++;
-      });
-      tempHTML += `
-        </div>
+
+        ${this.buildChildren(data,tempLvl)}
       </div>
       `;
-    }
+      this.indexes[tempLvl]++;
+    });
+
     return tempHTML;
   }
-  createMarkup(values, controller){
-    console.log(values);
+
+  buildChildren(mainValue, lvl) {
+    let tempHTML = `
+    <div id="c-${lvl}-${this.indexes[lvl]}" class="collapse" aria-labelledby="h-${lvl}-${this.indexes[lvl]}">
+      <div class="card-body">
+        ${mainValue.docs.length ? `
+        <ul>
+          ${mainValue.docs.map(doc => `
+            <li><a href="${doc.url}" target="_blank">${doc.report_title}</a></li>
+          `).join('')}
+        </ul>
+        ` : ''}
+        ${Object.keys(mainValue.sections).length ? `
+        ${this.buildHeaders(mainValue.sections, lvl)}
+        ` : ''}
+      </div>
+    </div>`;
+
+    return tempHTML;
+  }
+
+  createMarkup(values, controller) {
+    // console.log(values);
     let tempHTML = '';
-    let params = controller.panel.version.split('--');
-    console.log(params);
+    let params = this.version.split('--');
+    // console.log(params);
     switch (params[0]) {
       case 'table':
         switch (params[1]) {
@@ -120,7 +115,7 @@ export default class Panel {
                <article class="fixed-size"><a href="${location.url}" target="_blank">Report</a></article>
                <article class="mobile-header">Max Lead Result</article>
                <article class="fixed-size">
-               ${controller.panel.getStatus(location.status)}
+               ${this.getStatus(location.status)}
                </article>
                <article class="mobile-header">Fix Plan</article>
                <article class="fixed-size">
@@ -136,24 +131,25 @@ export default class Panel {
         break;
       case 'archive':
         let data = this.buildStructure(values);
+        // console.log(data);
         switch (params[1]) {
           case 'v01':
             let tempIndexLvl = 0;
-            controller.panel.indexes.push(0);
-            Object.entries(values.reports).forEach(([key, value]) => {
+            this.indexes.push(0);
+            Object.entries(data).forEach(([key, value]) => {
               tempHTML += `
               <div class="card">
-                <div class="card-header" id="h-${controller.panel.indexes[tempIndexLvl]}">
+                <div class="card-header" id="h-${tempIndexLvl}-${this.indexes[tempIndexLvl]}">
                   <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#c-${controller.panel.indexes[tempIndexLvl]}" aria-expanded="true" aria-controls="c-${controller.panel.indexes[tempIndexLvl]}">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#c-${tempIndexLvl}-${this.indexes[tempIndexLvl]}" aria-expanded="true" aria-controls="c-${tempIndexLvl}-${this.indexes[tempIndexLvl]}">
                       ${key}
                     </button>
                   </h5>
                 </div>
-                ${controller.panel.buildChildren(value, values.base_path, tempIndexLvl, controller)}
+                ${this.buildChildren(value, tempIndexLvl)}
               </div>
               `;
-              controller.panel.indexes[tempIndexLvl]++;
+              this.indexes[tempIndexLvl]++;
             });
             break;
           default:
@@ -163,39 +159,36 @@ export default class Panel {
       default:
         console.log('no valid format found');
     }
-    console.log(tempHTML);
+    // console.log(tempHTML);
     return tempHTML;
   }
 
-  buildStructure(data){
-    console.log(data);
-    let structData = [];
-    data.map(doc => {
-      if(doc.section != null){
-        console.log(doc.section);
-        console.log(Object.keys(structData).includes(doc.section));
-        if(Object.keys(structData).includes(doc.section)){
-          if(doc.sub_section != null){
-            if(Object.keys(structData[doc.section]).includes(doc.sub_section)){
-              structData[doc.section][doc.sub_section].push(doc);
-            }else{
-              structData[doc.section][doc.sub_section] = [doc];
-            }
-          }else{
-            structData[doc.section].push(doc);
-          }
+  buildStructure(data) {
+    let structData = {};
+
+    data.forEach(item => {
+      if(item.section != undefined) {
+        if(!Object.keys(structData).includes(item.section)) {
+          // console.log('new section');
+          structData[item.section] = {sections: {}, docs: []};
         }else{
-          if(doc.sub_section != null){
-            structData[doc.section][doc.sub_section] = [doc];
-          }else{
-            structData[doc.section] = [doc];
-          }
+          // console.log('section already exist');
+        }
+      }
+      if(item.sub_section != undefined) {
+        // console.log('found sub');
+        if(!Object.keys(structData[item.section].sections).includes(item.sub_section)) {
+          // console.log('new sub section');
+          structData[item.section].sections[item.sub_section] = {sections: {}, docs: []};
+          structData[item.section].sections[item.sub_section].docs.push(item);
+        }else{
+          structData[item.section].sections[item.sub_section].docs.push(item);
         }
       }else{
-        structData['root'] = [doc];
+        structData[item.section].docs.push(item);
       }
     });
-    console.log(structData);
+    
     return structData;
   }
 }
