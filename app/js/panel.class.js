@@ -49,8 +49,8 @@ export default class Panel {
 
   buildHeaders(value, lvl){
     let tempHTML = '';
-    let tempLvl = lvl + 1;
-    this.indexes[tempLvl] = 0;
+    let tempLvl = lvl;
+    this.indexes[tempLvl]++;
     Object.entries(value).forEach(([key, data]) => {
       tempHTML +=`
       <div class="card">
