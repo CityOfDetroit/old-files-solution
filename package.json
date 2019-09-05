@@ -1,8 +1,8 @@
 {
-  "name": "local-services-lookup",
-  "version": "1.0.0",
-  "description": "Simple app to lookup city services based on a location.",
-  "main": "main.js",
+  "name": "old-files-solution",
+  "version": "2.0.0",
+  "description": "Simple app to help us serve old files in drupal",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/CityOfDetroit/old-files-solution.git"
@@ -13,17 +13,14 @@
   "author": "Edgar Montes",
   "license": "MIT",
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.10.2",
+    "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "babelify": "^7.3.0",
-    "browser-sync": "^2.24.4",
-    "browserify": "^14.5.0",
-    "gulp-sass": "^4.0.1",
-    "moment": "^2.22.2",
-    "vinyl-source-stream": "^1.1.2"
+    "cssnano": "^4.1.10",
+    "sass": "^1.22.9"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
-    "gulp": "^3.9.1",
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "moment": "^2.24.0"
   }
 }
