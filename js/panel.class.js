@@ -76,13 +76,14 @@ export default class Panel {
   }
 
   buildChildren(mainValue, lvl) {
+    // console.log(mainValue);
     let tempHTML = `
     <div id="c-${lvl}-${this.indexes[lvl]}" class="collapse" aria-labelledby="h-${lvl}-${this.indexes[lvl]}">
       <div class="card-body">
         ${mainValue.docs.length ? `
         <ul>
           ${mainValue.docs.map(doc => `
-            <li><a href="${doc.url}" target="_blank">${doc.report_title}</a></li>
+            <li><a href="${doc.attributes.URL}" target="_blank">${doc.attributes.Report_Title}</a></li>
           `).join('')}
         </ul>
         ` : ''}
@@ -204,27 +205,28 @@ export default class Panel {
 
   buildStructure(data) {
     let structData = {};
-    console.log(data);
+    // console.log(data);
     data.forEach(item => {
-      if(item.section != undefined) {
-        if(!Object.keys(structData).includes(item.section)) {
+      if(item.attributes.Section != undefined) {
+        if(!Object.keys(structData).includes(item.attributes.Section)) {
           // console.log('new section');
-          structData[item.section] = {sections: {}, docs: []};
+          structData[item.attributes.Section] = {sections: {}, docs: []};
         }else{
           // console.log('section already exist');
         }
       }
-      if(item.sub_section != undefined) {
+      if(item.attributes.sub_section != undefined) {
         // console.log('found sub');
-        if(!Object.keys(structData[item.section].sections).includes(item.sub_section)) {
+        if(!Object.keys(structData[item.attributes.Section].sections).includes(item.attributes.sub_section)) {
           // console.log('new sub section');
-          structData[item.section].sections[item.sub_section] = {sections: {}, docs: []};
-          structData[item.section].sections[item.sub_section].docs.push(item);
+          structData[item.attributes.Section].sections[item.attributes.sub_section] = {sections: {}, docs: []};
+          structData[item.attributes.Section].sections[item.attributes.sub_section].docs.push(item);
         }else{
-          structData[item.section].sections[item.sub_section].docs.push(item);
+          structData[item.attributes.Section].sections[item.attributes.sub_section].docs.push(item);
         }
       }else{
-        structData[item.section].docs.push(item);
+        // console.log(item);
+        structData[item.attributes.Section].docs.push(item);
       }
     });
     
