@@ -11,7 +11,7 @@ export default class Controller {
     fetch(controller.source)
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) {
-      controller.panel.creatPanel(data, controller);
+      controller.panel.creatPanel(data.features, controller);
     });
   }
 }
