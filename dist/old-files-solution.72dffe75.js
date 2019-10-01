@@ -13,4 +13,4 @@ require("whatwg-fetch"),module.exports=self.fetch.bind(self);
 },{"./panel.class.js":"+ajR","isomorphic-fetch":"Moh1"}],"Focm":[function(require,module,exports) {
 "use strict";var e=t(require("./js/controller.class"));function t(e){return e&&e.__esModule?e:{default:e}}!function(){try{let r=document.querySelector('input[name="archive-format"]').value,o=document.querySelector('input[name="archive-source"]').value;new e.default(r,o)}catch(t){console.log("no archive to display")}}(window);
 },{"./js/controller.class":"Gv1W"}]},{},["Focm"], null)
-//# sourceMappingURL=old-files-solution.72dffe75.js.map
+//# sourceMappingURL=/old-files-solution.72dffe75.js.map
