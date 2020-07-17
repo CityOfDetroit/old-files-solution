@@ -1,5 +1,6 @@
 'use strict';
 import Controller from './js/controller.class';
+import './scss/styles.scss';
 (function(){
   try {
     let format = document.querySelector('input[name="archive-format"]').value;

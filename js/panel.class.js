@@ -76,7 +76,7 @@ export default class Panel {
   }
 
   buildChildren(mainValue, lvl) {
-    // console.log(mainValue);
+    mainValue.docs.sort((a, b) => (a.Display_Order > b.Display_Order) ? 1 : -1);
     let tempHTML = `
     <div id="c-${lvl}-${this.indexes[lvl]}" class="collapse" aria-labelledby="h-${lvl}-${this.indexes[lvl]}">
       <div class="card-body">

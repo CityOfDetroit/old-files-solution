@@ -8,19 +8,21 @@
     "url": "https://github.com/CityOfDetroit/old-files-solution.git"
   },
   "scripts": {
-    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+    "start": "parcel index.html --https --no-cache --no-source-maps -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build index.js --no-cache --public-url '.' --no-source-maps -d build"
   },
   "author": "Edgar Montes",
   "license": "MIT",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.10.2",
+    "@fortawesome/fontawesome-free": "^5.14.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "cssnano": "^4.1.10",
-    "sass": "^1.22.9"
+    "sass": "^1.26.10"
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "moment": "^2.24.0"
+    "moment": "^2.27.0"
   }
 }
