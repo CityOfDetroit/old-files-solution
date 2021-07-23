@@ -115,16 +115,16 @@ export default class Panel {
             ${values.map(location =>
               `<section class="archives-row">
                <article class="mobile-header">School</article>
-               <article class="flex-size">${location.school_name}</article>
+               <article class="flex-size">${location.attributes.school_name}</article>
                <article class="mobile-header">Analysis Completed</article>
-               <article class="fixed-size"><a href="${location.url}" target="_blank">Report</a></article>
+               <article class="fixed-size"><a href="${location.attributes.url}" target="_blank">Report</a></article>
                <article class="mobile-header">Max Lead Result</article>
                <article class="fixed-size">
-               ${this.getStatus(location.status)}
+               ${this.getStatus(location.attributes.status)}
                </article>
                <article class="mobile-header">Fix Plan</article>
                <article class="fixed-size">
-               ${location.fix_plan_url ? `<a href="${location.fix_plan_url}" target="_blank">${location.fix_plan_status}</a>` : ''}
+               ${location.attributes.fix_plan_url ? `<a href="${location.attributes.fix_plan_url}" target="_blank">${location.attributes.fix_plan_status}</a>` : ''}
                </article>
               </section>`
             ).join('')}

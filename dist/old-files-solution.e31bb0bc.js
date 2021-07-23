@@ -121,7 +121,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 var define;
 var global = arguments[3];
 //! moment.js
-//! version : 2.27.0
+//! version : 2.29.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -2662,8 +2662,7 @@ var global = arguments[3];
     hooks.createFromInputFallback = deprecate(
         'value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' +
             'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' +
-            'discouraged and will be removed in an upcoming major release. Please refer to ' +
-            'http://momentjs.com/guides/#/warnings/js-date/ for more info.',
+            'discouraged. Please refer to http://momentjs.com/guides/#/warnings/js-date/ for more info.',
         function (config) {
             config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
         }
@@ -3848,7 +3847,10 @@ var global = arguments[3];
     function calendar$1(time, formats) {
         // Support for single parameter, formats only overload to the calendar function
         if (arguments.length === 1) {
-            if (isMomentInput(arguments[0])) {
+            if (!arguments[0]) {
+                time = undefined;
+                formats = undefined;
+            } else if (isMomentInput(arguments[0])) {
                 time = arguments[0];
                 formats = undefined;
             } else if (isCalendarSpec(arguments[0])) {
@@ -4526,7 +4528,7 @@ var global = arguments[3];
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].name;
@@ -4546,7 +4548,7 @@ var global = arguments[3];
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].narrow;
@@ -4566,7 +4568,7 @@ var global = arguments[3];
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].abbr;
@@ -4589,7 +4591,7 @@ var global = arguments[3];
             dir = eras[i].since <= eras[i].until ? +1 : -1;
 
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (
                 (eras[i].since <= val && val <= eras[i].until) ||
@@ -5740,7 +5742,7 @@ var global = arguments[3];
 
     //! moment.js
 
-    hooks.version = '2.27.0';
+    hooks.version = '2.29.1';
 
     setHookCallback(createLocal);
 
@@ -5817,23 +5819,23 @@ class Panel {
   getStatus(value) {
     switch (true) {
       case value == 'Acceptable':
-        return "<span class=\"green-text\">".concat(value, "</span>");
+        return `<span class="green-text">${value}</span>`;
         break;
 
       case value == 'Pending':
-        return "<span class=\"yellow-text\">".concat(value, "</span>");
+        return `<span class="yellow-text">${value}</span>`;
         break;
 
       case value == 'Elevated':
-        return "<span class=\"red-text\">".concat(value, "</span>");
+        return `<span class="red-text">${value}</span>`;
         break;
 
       case value != null:
-        return "<a href=\"https://detroitmi.gov".concat(value, "\" target=\"_blank\"><span class=\"green-text\"><i class=\"far fa-check-square\"></i></span></a>");
+        return `<a href="https://detroitmi.gov${value}" target="_blank"><span class="green-text"><i class="far fa-check-square"></i></span></a>`;
         break;
 
       default:
-        return "";
+        return ``;
     }
   }
 
@@ -5843,9 +5845,9 @@ class Panel {
     for (var key in value.doc) {
       if (value.doc.hasOwnProperty(key)) {
         if (value.doc[key].includes('http://') || value.doc[key].includes('https://')) {
-          tempHTML = "<a href=\"".concat(value.doc[key], "\" target=\"_blank\">").concat(key, "</a>");
+          tempHTML = `<a href="${value.doc[key]}" target="_blank">${key}</a>`;
         } else {
-          tempHTML = "<a href=\"".concat(baseURL).concat(value.doc[key], "\" target=\"_blank\">").concat(key, "</a>");
+          tempHTML = `<a href="${baseURL}${value.doc[key]}" target="_blank">${key}</a>`;
         }
       }
     }
@@ -5857,9 +5859,20 @@ class Panel {
     let tempHTML = '';
     let tempLvl = lvl;
     this.indexes[tempLvl]++;
-    Object.entries(value).forEach((_ref) => {
-      let [key, data] = _ref;
-      tempHTML += "\n      <div class=\"card\">\n        <div class=\"card-header\" id=\"h-".concat(tempLvl, "-").concat(this.indexes[tempLvl], "\">\n          <h5 class=\"mb-0\">\n            <button class=\"btn btn-link\" data-toggle=\"collapse\" data-target=\"#c-").concat(tempLvl, "-").concat(this.indexes[tempLvl], "\" aria-expanded=\"true\" aria-controls=\"c-").concat(tempLvl, "-").concat(this.indexes[tempLvl], "\">\n              ").concat(key, "\n            </button>\n          </h5>\n        </div>\n\n        ").concat(this.buildChildren(data, tempLvl), "\n      </div>\n      ");
+    Object.entries(value).forEach(([key, data]) => {
+      tempHTML += `
+      <div class="card">
+        <div class="card-header" id="h-${tempLvl}-${this.indexes[tempLvl]}">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#c-${tempLvl}-${this.indexes[tempLvl]}" aria-expanded="true" aria-controls="c-${tempLvl}-${this.indexes[tempLvl]}">
+              ${key}
+            </button>
+          </h5>
+        </div>
+
+        ${this.buildChildren(data, tempLvl)}
+      </div>
+      `;
       this.indexes[tempLvl]++;
     });
     return tempHTML;
@@ -5867,7 +5880,21 @@ class Panel {
 
   buildChildren(mainValue, lvl) {
     mainValue.docs.sort((a, b) => a.Display_Order > b.Display_Order ? 1 : -1);
-    let tempHTML = "\n    <div id=\"c-".concat(lvl, "-").concat(this.indexes[lvl], "\" class=\"collapse\" aria-labelledby=\"h-").concat(lvl, "-").concat(this.indexes[lvl], "\">\n      <div class=\"card-body\">\n        ").concat(mainValue.docs.length ? "\n        <ul>\n          ".concat(mainValue.docs.map(doc => "\n            <li><a href=\"".concat(doc.attributes.URL, "\" target=\"_blank\">").concat(doc.attributes.Report_Title, "</a></li>\n          ")).join(''), "\n        </ul>\n        ") : '', "\n        ").concat(Object.keys(mainValue.sections).length ? "\n        ".concat(this.buildHeaders(mainValue.sections, lvl), "\n        ") : '', "\n      </div>\n    </div>");
+    let tempHTML = `
+    <div id="c-${lvl}-${this.indexes[lvl]}" class="collapse" aria-labelledby="h-${lvl}-${this.indexes[lvl]}">
+      <div class="card-body">
+        ${mainValue.docs.length ? `
+        <ul>
+          ${mainValue.docs.map(doc => `
+            <li><a href="${doc.attributes.URL}" target="_blank">${doc.attributes.Report_Title}</a></li>
+          `).join('')}
+        </ul>
+        ` : ''}
+        ${Object.keys(mainValue.sections).length ? `
+        ${this.buildHeaders(mainValue.sections, lvl)}
+        ` : ''}
+      </div>
+    </div>`;
     return tempHTML;
   }
 
@@ -5880,12 +5907,61 @@ class Panel {
       case 'table':
         switch (params[1]) {
           case 'v01':
-            tempHTML = "\n            <section class=\"archives-row header\">\n              <article class=\"flex-size\">School/Day Care</article>\n              <article class=\"fixed-size\">Analysis Completed</article>\n              <article class=\"fixed-size\">Max Lead Result</article>\n              <article class=\"fixed-size\">Fix Plan</article>\n            </section>\n            ".concat(values.map(location => "<section class=\"archives-row\">\n               <article class=\"mobile-header\">School</article>\n               <article class=\"flex-size\">".concat(location.school_name, "</article>\n               <article class=\"mobile-header\">Analysis Completed</article>\n               <article class=\"fixed-size\"><a href=\"").concat(location.url, "\" target=\"_blank\">Report</a></article>\n               <article class=\"mobile-header\">Max Lead Result</article>\n               <article class=\"fixed-size\">\n               ").concat(this.getStatus(location.status), "\n               </article>\n               <article class=\"mobile-header\">Fix Plan</article>\n               <article class=\"fixed-size\">\n               ").concat(location.fix_plan_url ? "<a href=\"".concat(location.fix_plan_url, "\" target=\"_blank\">").concat(location.fix_plan_status, "</a>") : '', "\n               </article>\n              </section>")).join(''), "\n            ");
+            tempHTML = `
+            <section class="archives-row header">
+              <article class="flex-size">School/Day Care</article>
+              <article class="fixed-size">Analysis Completed</article>
+              <article class="fixed-size">Max Lead Result</article>
+              <article class="fixed-size">Fix Plan</article>
+            </section>
+            ${values.map(location => `<section class="archives-row">
+               <article class="mobile-header">School</article>
+               <article class="flex-size">${location.attributes.school_name}</article>
+               <article class="mobile-header">Analysis Completed</article>
+               <article class="fixed-size"><a href="${location.attributes.url}" target="_blank">Report</a></article>
+               <article class="mobile-header">Max Lead Result</article>
+               <article class="fixed-size">
+               ${this.getStatus(location.attributes.status)}
+               </article>
+               <article class="mobile-header">Fix Plan</article>
+               <article class="fixed-size">
+               ${location.attributes.fix_plan_url ? `<a href="${location.attributes.fix_plan_url}" target="_blank">${location.attributes.fix_plan_status}</a>` : ''}
+               </article>
+              </section>`).join('')}
+            `;
             break;
 
           case 'v02':
             console.log(values.features);
-            tempHTML = "\n              <section class=\"archives-row header\">\n                <article class=\"fixed-size\">Certificate of Compliance</article>\n                <article class=\"flex-size\">School</article>\n                <article class=\"fixed-size\">Type</article>\n                <article class=\"fixed-size\">Safety Insp.</article>\n                <article class=\"fixed-size\">Safety Re-Insp.</article>\n                <article class=\"fixed-size\">Health Insp.</article>\n                <article class=\"fixed-size\">Health Re-Insp.</article>\n              </section>\n              ".concat(values.features.map(location => "<section class=\"archives-row\">\n                  <article class=\"mobile-header\">Certificate of Compliance</article>\n                  <article class=\"fixed-size\">\n                  ".concat(this.getStatus(location.attributes.Certificate_of_Compliance), "\n                  </article>\n                 <article class=\"mobile-header\">School</article>\n                 <article class=\"flex-size\">").concat(location.attributes.School_Name, "</article>\n                 <article class=\"mobile-header\">Type</article>\n                 <article class=\"fixed-size\">").concat(location.attributes.School_Type, "</article>\n                 <article class=\"mobile-header\">Safety Insp.</article>\n                 ").concat(location.attributes.Safety_Inspection_Report ? "<article class=\"fixed-size\"><a href=\"https://detroitmi.gov".concat(location.attributes.Safety_Inspection_Report, "\" target=\"_blank\">").concat(location.attributes.Safety_Inspection_Date, "</a></article>") : "<article class=\"fixed-size\"></article>", "\n                 <article class=\"mobile-header\">Safety Re-Insp.</article>\n                 ").concat(location.attributes.Safety_Re_Inspection_Report ? "<article class=\"fixed-size\"><a href=\"https://detroitmi.gov".concat(location.attributes.Safety_Re_Inspection_Report, "\" target=\"_blank\">").concat(location.attributes.Safety_Re_Inspection_Date, "</a></article>") : "<article class=\"fixed-size\"></article>", "\n                 <article class=\"mobile-header\">Health Insp.</article>\n                 ").concat(location.attributes.Health_Inspection_Report ? "<article class=\"fixed-size\"><a href=\"https://detroitmi.gov".concat(location.attributes.Health_Inspection_Report, "\" target=\"_blank\">").concat(location.attributes.Health_Inspection_Date, "</a></article>") : "<article class=\"fixed-size\"></article>", "\n                 <article class=\"mobile-header\">Health Re-Insp.</article>\n                 ").concat(location.attributes.Health_Re_Inspection_Report ? "<article class=\"fixed-size\"><a href=\"https://detroitmi.gov".concat(location.attributes.Health_Re_Inspection_Report, "\" target=\"_blank\">").concat(location.attributes.Health_Re_Inspection_Date, "</a></article>") : "<article class=\"fixed-size\"></article>", "\n                </section>")).join(''), "\n              ");
+            tempHTML = `
+              <section class="archives-row header">
+                <article class="fixed-size">Certificate of Compliance</article>
+                <article class="flex-size">School</article>
+                <article class="fixed-size">Type</article>
+                <article class="fixed-size">Safety Insp.</article>
+                <article class="fixed-size">Safety Re-Insp.</article>
+                <article class="fixed-size">Health Insp.</article>
+                <article class="fixed-size">Health Re-Insp.</article>
+              </section>
+              ${values.features.map(location => `<section class="archives-row">
+                  <article class="mobile-header">Certificate of Compliance</article>
+                  <article class="fixed-size">
+                  ${this.getStatus(location.attributes.Certificate_of_Compliance)}
+                  </article>
+                 <article class="mobile-header">School</article>
+                 <article class="flex-size">${location.attributes.School_Name}</article>
+                 <article class="mobile-header">Type</article>
+                 <article class="fixed-size">${location.attributes.School_Type}</article>
+                 <article class="mobile-header">Safety Insp.</article>
+                 ${location.attributes.Safety_Inspection_Report ? `<article class="fixed-size"><a href="https://detroitmi.gov${location.attributes.Safety_Inspection_Report}" target="_blank">${location.attributes.Safety_Inspection_Date}</a></article>` : `<article class="fixed-size"></article>`}
+                 <article class="mobile-header">Safety Re-Insp.</article>
+                 ${location.attributes.Safety_Re_Inspection_Report ? `<article class="fixed-size"><a href="https://detroitmi.gov${location.attributes.Safety_Re_Inspection_Report}" target="_blank">${location.attributes.Safety_Re_Inspection_Date}</a></article>` : `<article class="fixed-size"></article>`}
+                 <article class="mobile-header">Health Insp.</article>
+                 ${location.attributes.Health_Inspection_Report ? `<article class="fixed-size"><a href="https://detroitmi.gov${location.attributes.Health_Inspection_Report}" target="_blank">${location.attributes.Health_Inspection_Date}</a></article>` : `<article class="fixed-size"></article>`}
+                 <article class="mobile-header">Health Re-Insp.</article>
+                 ${location.attributes.Health_Re_Inspection_Report ? `<article class="fixed-size"><a href="https://detroitmi.gov${location.attributes.Health_Re_Inspection_Report}" target="_blank">${location.attributes.Health_Re_Inspection_Date}</a></article>` : `<article class="fixed-size"></article>`}
+                </section>`).join('')}
+              `;
             break;
 
           default:
@@ -5900,9 +5976,19 @@ class Panel {
           case 'v01':
             let tempIndexLvl = 0;
             this.indexes.push(0);
-            Object.entries(data).forEach((_ref2) => {
-              let [key, value] = _ref2;
-              tempHTML += "\n              <div class=\"card\">\n                <div class=\"card-header\" id=\"h-".concat(tempIndexLvl, "-").concat(this.indexes[tempIndexLvl], "\">\n                  <h5 class=\"mb-0\">\n                    <button class=\"btn btn-link\" type=\"button\" data-toggle=\"collapse\" data-target=\"#c-").concat(tempIndexLvl, "-").concat(this.indexes[tempIndexLvl], "\" aria-expanded=\"true\" aria-controls=\"c-").concat(tempIndexLvl, "-").concat(this.indexes[tempIndexLvl], "\">\n                      ").concat(key, "\n                    </button>\n                  </h5>\n                </div>\n                ").concat(this.buildChildren(value, tempIndexLvl), "\n              </div>\n              ");
+            Object.entries(data).forEach(([key, value]) => {
+              tempHTML += `
+              <div class="card">
+                <div class="card-header" id="h-${tempIndexLvl}-${this.indexes[tempIndexLvl]}">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#c-${tempIndexLvl}-${this.indexes[tempIndexLvl]}" aria-expanded="true" aria-controls="c-${tempIndexLvl}-${this.indexes[tempIndexLvl]}">
+                      ${key}
+                    </button>
+                  </h5>
+                </div>
+                ${this.buildChildren(value, tempIndexLvl)}
+              </div>
+              `;
               this.indexes[tempIndexLvl]++;
             });
             break;
@@ -5959,6 +6045,7 @@ class Panel {
 
 exports.default = Panel;
 },{"moment":"node_modules/moment/moment.js"}],"node_modules/whatwg-fetch/fetch.js":[function(require,module,exports) {
+
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5969,10 +6056,11 @@ exports.Request = Request;
 exports.Response = Response;
 exports.fetch = fetch;
 exports.DOMException = void 0;
+var global = typeof globalThis !== 'undefined' && globalThis || typeof self !== 'undefined' && self || typeof global !== 'undefined' && global;
 var support = {
-  searchParams: 'URLSearchParams' in self,
-  iterable: 'Symbol' in self && 'iterator' in Symbol,
-  blob: 'FileReader' in self && 'Blob' in self && function () {
+  searchParams: 'URLSearchParams' in global,
+  iterable: 'Symbol' in global && 'iterator' in Symbol,
+  blob: 'FileReader' in global && 'Blob' in global && function () {
     try {
       new Blob();
       return true;
@@ -5980,8 +6068,8 @@ var support = {
       return false;
     }
   }(),
-  formData: 'FormData' in self,
-  arrayBuffer: 'ArrayBuffer' in self
+  formData: 'FormData' in global,
+  arrayBuffer: 'ArrayBuffer' in global
 };
 
 function isDataView(obj) {
@@ -6001,8 +6089,8 @@ function normalizeName(name) {
     name = String(name);
   }
 
-  if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name)) {
-    throw new TypeError('Invalid character in header field name');
+  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === '') {
+    throw new TypeError('Invalid character in header field name: "' + name + '"');
   }
 
   return name.toLowerCase();
@@ -6174,6 +6262,17 @@ function Body() {
   this.bodyUsed = false;
 
   this._initBody = function (body) {
+    /*
+      fetch-mock wraps the Response object in an ES6 Proxy to
+      provide useful test harness features such as flush. However, on
+      ES5 browsers without fetch or Proxy support pollyfills must be used;
+      the proxy-pollyfill is unable to proxy an attribute unless it exists
+      on the object before the Proxy is created. This change ensures
+      Response.bodyUsed exists on the instance, while maintaining the
+      semantic of setting Request.bodyUsed in the constructor before
+      _initBody is called.
+    */
+    this.bodyUsed = this.bodyUsed;
     this._bodyInit = body;
 
     if (!body) {
@@ -6228,7 +6327,17 @@ function Body() {
 
     this.arrayBuffer = function () {
       if (this._bodyArrayBuffer) {
-        return consumed(this) || Promise.resolve(this._bodyArrayBuffer);
+        var isConsumed = consumed(this);
+
+        if (isConsumed) {
+          return isConsumed;
+        }
+
+        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+          return Promise.resolve(this._bodyArrayBuffer.buffer.slice(this._bodyArrayBuffer.byteOffset, this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength));
+        } else {
+          return Promise.resolve(this._bodyArrayBuffer);
+        }
       } else {
         return this.blob().then(readBlobAsArrayBuffer);
       }
@@ -6275,6 +6384,10 @@ function normalizeMethod(method) {
 }
 
 function Request(input, options) {
+  if (!(this instanceof Request)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+
   options = options || {};
   var body = options.body;
 
@@ -6318,6 +6431,22 @@ function Request(input, options) {
   }
 
   this._initBody(body);
+
+  if (this.method === 'GET' || this.method === 'HEAD') {
+    if (options.cache === 'no-store' || options.cache === 'no-cache') {
+      // Search for a '_' parameter in the query string
+      var reParamSearch = /([?&])_=[^&]*/;
+
+      if (reParamSearch.test(this.url)) {
+        // If it already exists then set the value with the current time
+        this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime());
+      } else {
+        // Otherwise add a new '_' parameter to the end with the current time
+        var reQueryString = /\?/;
+        this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime();
+      }
+    }
+  }
 }
 
 Request.prototype.clone = function () {
@@ -6343,8 +6472,13 @@ function parseHeaders(rawHeaders) {
   var headers = new Headers(); // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
   // https://tools.ietf.org/html/rfc7230#section-3.2
 
-  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
-  preProcessedHeaders.split(/\r?\n/).forEach(function (line) {
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' '); // Avoiding split via regex to work around a common IE11 bug with the core-js 3.6.0 regex polyfill
+  // https://github.com/github/fetch/issues/748
+  // https://github.com/zloirock/core-js/issues/751
+
+  preProcessedHeaders.split('\r').map(function (header) {
+    return header.indexOf('\n') === 0 ? header.substr(1, header.length) : header;
+  }).forEach(function (line) {
     var parts = line.split(':');
     var key = parts.shift().trim();
 
@@ -6359,6 +6493,10 @@ function parseHeaders(rawHeaders) {
 Body.call(Request.prototype);
 
 function Response(bodyInit, options) {
+  if (!(this instanceof Response)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+
   if (!options) {
     options = {};
   }
@@ -6366,7 +6504,7 @@ function Response(bodyInit, options) {
   this.type = 'default';
   this.status = options.status === undefined ? 200 : options.status;
   this.ok = this.status >= 200 && this.status < 300;
-  this.statusText = 'statusText' in options ? options.statusText : 'OK';
+  this.statusText = options.statusText === undefined ? '' : '' + options.statusText;
   this.headers = new Headers(options.headers);
   this.url = options.url || '';
 
@@ -6408,7 +6546,7 @@ Response.redirect = function (url, status) {
   });
 };
 
-var DOMException = self.DOMException;
+var DOMException = global.DOMException;
 exports.DOMException = DOMException;
 
 try {
@@ -6447,22 +6585,38 @@ function fetch(input, init) {
       };
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL');
       var body = 'response' in xhr ? xhr.response : xhr.responseText;
-      resolve(new Response(body, options));
+      setTimeout(function () {
+        resolve(new Response(body, options));
+      }, 0);
     };
 
     xhr.onerror = function () {
-      reject(new TypeError('Network request failed'));
+      setTimeout(function () {
+        reject(new TypeError('Network request failed'));
+      }, 0);
     };
 
     xhr.ontimeout = function () {
-      reject(new TypeError('Network request failed'));
+      setTimeout(function () {
+        reject(new TypeError('Network request failed'));
+      }, 0);
     };
 
     xhr.onabort = function () {
-      reject(new DOMException('Aborted', 'AbortError'));
+      setTimeout(function () {
+        reject(new DOMException('Aborted', 'AbortError'));
+      }, 0);
     };
 
-    xhr.open(request.method, request.url, true);
+    function fixUrl(url) {
+      try {
+        return url === '' && global.location.href ? global.location.href : url;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    xhr.open(request.method, fixUrl(request.url), true);
 
     if (request.credentials === 'include') {
       xhr.withCredentials = true;
@@ -6470,13 +6624,23 @@ function fetch(input, init) {
       xhr.withCredentials = false;
     }
 
-    if ('responseType' in xhr && support.blob) {
-      xhr.responseType = 'blob';
+    if ('responseType' in xhr) {
+      if (support.blob) {
+        xhr.responseType = 'blob';
+      } else if (support.arrayBuffer && request.headers.get('Content-Type') && request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1) {
+        xhr.responseType = 'arraybuffer';
+      }
     }
 
-    request.headers.forEach(function (value, name) {
-      xhr.setRequestHeader(name, value);
-    });
+    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
+      Object.getOwnPropertyNames(init.headers).forEach(function (name) {
+        xhr.setRequestHeader(name, normalizeValue(init.headers[name]));
+      });
+    } else {
+      request.headers.forEach(function (value, name) {
+        xhr.setRequestHeader(name, value);
+      });
+    }
 
     if (request.signal) {
       request.signal.addEventListener('abort', abortXhr);
@@ -6495,11 +6659,11 @@ function fetch(input, init) {
 
 fetch.polyfill = true;
 
-if (!self.fetch) {
-  self.fetch = fetch;
-  self.Headers = Headers;
-  self.Request = Request;
-  self.Response = Response;
+if (!global.fetch) {
+  global.fetch = fetch;
+  global.Headers = Headers;
+  global.Request = Request;
+  global.Response = Response;
 }
 },{}],"node_modules/isomorphic-fetch/fetch-npm-browserify.js":[function(require,module,exports) {
 // the whatwg-fetch polyfill installs the fetch() function
@@ -6540,7 +6704,7 @@ class Controller {
 }
 
 exports.default = Controller;
-},{"./panel.class.js":"js/panel.class.js","isomorphic-fetch":"node_modules/isomorphic-fetch/fetch-npm-browserify.js"}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"./panel.class.js":"js/panel.class.js","isomorphic-fetch":"node_modules/isomorphic-fetch/fetch-npm-browserify.js"}],"../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -6567,12 +6731,12 @@ function getBundleURL() {
 }
 
 function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
 }
 
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
-},{}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+},{}],"../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
 var bundle = require('./bundle-url');
 
 function updateLink(link) {
@@ -6607,12 +6771,12 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"scss/styles.scss":[function(require,module,exports) {
+},{"./bundle-url":"../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"scss/styles.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"index.js":[function(require,module,exports) {
+},{"_css_loader":"../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"index.js":[function(require,module,exports) {
 'use strict';
 
 var _controller = _interopRequireDefault(require("./js/controller.class"));
@@ -6630,7 +6794,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     console.log('no archive to display');
   }
 })(window);
-},{"./js/controller.class":"js/controller.class.js","./scss/styles.scss":"scss/styles.scss"}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./js/controller.class":"js/controller.class.js","./scss/styles.scss":"scss/styles.scss"}],"../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6658,7 +6822,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57465" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46597" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -6834,4 +6998,4 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
+},{}]},{},["../../../../../home/jedgar1mx/.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
