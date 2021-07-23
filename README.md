@@ -5,8 +5,7 @@ Simple app to help us serve old files in drupal.
 ## Getting Started
 
 This project was created using:
-    [Mapbox](https://docs.mapbox.com/mapbox-gl-js/api/) for web map rendering.
-    [Parcel](https://parceljs.org/) as a web application bundler.
+- [Parcel](https://parceljs.org/) as a web application bundler.
 
 ## Setup Local Environment.
 
@@ -17,12 +16,17 @@ This project was created using:
 2. Install node dependencies.
 
     ```
-    $ npm install
+    $ yarn
     ```
 
 3. Run local instance.
     ```
-    $ parcel index.html
+    $ yarn start
+    ```
+
+4. Create production build.
+    ```
+    $ yarn build
     ```
 ## Resources
 
